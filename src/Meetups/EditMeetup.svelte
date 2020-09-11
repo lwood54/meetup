@@ -40,6 +40,8 @@
     <TextInput
       controlType="input"
       id="title"
+      valid={true}
+      validityMessage="Please enter a valid title."
       label="Title"
       value={title}
       on:input={event => (title = event.target.value)} />
