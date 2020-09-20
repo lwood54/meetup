@@ -5,6 +5,7 @@
 	import Badge from "../UI/Badge.svelte";
 	import { scale } from "svelte/transition";
 	import { flip } from "svelte/animate";
+	import LoadingSpinner from "../UI/LoadingSpinner.svelte";
 
 	export let title;
 	export let id;
@@ -15,9 +16,12 @@
 	export let email;
 	export let isFav;
 
+	let isLoading = false;
+
 	const dispatch = createEventDispatcher();
 
 	const toggleFavorite = () => {
+		isLoading = true;
 		fetch(`https://svelte-meetup-c9828.firebaseio.com/meetups/${id}.json`, {
 			method: "PATCH", // PATCH is used to override data, but keep the rest if unsuplied, like a missing isFavorite
 			body: JSON.stringify({ isFavorite: !isFav }),
@@ -28,8 +32,12 @@
 					throw new Error("Could not update favorite, try again.");
 				}
 				meetups.toggleFavorite(id);
+				isLoading = false;
 			})
-			.catch((err) => console.log(err));
+			.catch((err) => {
+				console.log(err);
+				isLoading = false;
+			});
 	};
 </script>
 
@@ -108,7 +116,13 @@
 	</div>
 	<footer>
 		<Button mode="outline" type="button" on:click={() => dispatch('edit', id)}>Edit</Button>
-		<Button mode="outline" color={isFav ? null : 'success'} type="button" on:click={toggleFavorite}>{isFav ? 'Unfavorite' : 'Favorite'}</Button>
+		{#if isLoading}
+			<LoadingSpinner />
+		{:else}
+			<Button mode="outline" color={isFav ? null : 'success'} type="button" on:click={toggleFavorite}>
+				{isFav ? 'Unfavorite' : 'Favorite'}
+			</Button>
+		{/if}
 		<Button type="button" on:click={() => dispatch('showdetails', id)}>Show Details</Button>
 	</footer>
 </article>

@@ -7,6 +7,7 @@
 	import MeetupDetail from "./Meetups/MeetupDetail.svelte";
 	import MeetupGrid from "./Meetups/MeetupGrid.svelte";
 	import TextInput from "./UI/TextInput.svelte";
+	import Error from "./UI/Error.svelte";
 
 	// let meetups = ;
 
@@ -15,6 +16,7 @@
 	let page = "overview";
 	let pageData = {};
 	let isLoading = true;
+	let error;
 
 	fetch("https://svelte-meetup-c9828.firebaseio.com/meetups.json")
 		.then((res) => {
@@ -38,6 +40,7 @@
 			}, 1000);
 		})
 		.catch((err) => {
+			error = err;
 			isLoading = false;
 			console.log(err);
 		});
@@ -70,6 +73,10 @@
 		editMode = "edit";
 		editedId = e.detail;
 	};
+
+	const cancelError = () => {
+		error = null;
+	};
 </script>
 
 <style>
@@ -77,6 +84,10 @@
 		margin-top: 5rem;
 	}
 </style>
+
+{#if error}
+	<Error message={error.message} on:cancel={cancelError} />
+{/if}
 
 <Header />
 
