@@ -86,7 +86,16 @@
 	};
 
 	const deleteMeetup = () => {
-		meetups.removeMeetup(id);
+		fetch(`https://svelte-meetup-c9828.firebaseio.com/meetups/${id}.json`, {
+			method: "DELETE", // nothing else needed to be passed because not sending data
+		})
+			.then((res) => {
+				if (!res.ok) {
+					throw new Error("Could not delete, try again later.");
+				}
+				meetups.removeMeetup(id);
+			})
+			.catch((err) => console.log(err));
 		dispatch("save");
 	};
 

@@ -34,7 +34,7 @@
 			// set a timeout just to observe loading spinner
 			setTimeout(() => {
 				isLoading = false;
-				meetups.setMeetups(loadedMeetups); // use custom functions from custom store
+				meetups.setMeetups(loadedMeetups.reverse()); // use custom functions from custom store
 			}, 1000);
 		})
 		.catch((err) => {
