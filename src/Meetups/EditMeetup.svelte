@@ -50,7 +50,19 @@
 		};
 
 		if (id) {
-			meetups.updateMeetup(id, meetupData);
+			fetch(`https://svelte-meetup-c9828.firebaseio.com/meetups/${id}.json`, {
+				// method: "PUT", // PUT is used to OVERRIDE data in firebase, so any unsuplied data will be removed, like a missing isFavorite
+				method: "PATCH", // PATCH is used to override data, but keep the rest if unsuplied, like a missing isFavorite
+				body: JSON.stringify(meetupData),
+				headers: { "Content-Type": "application/json" },
+			})
+				.then((res) => {
+					if (!res.ok) {
+						throw new Error("An error occurred, please try again.");
+					}
+					meetups.updateMeetup(id, meetupData);
+				})
+				.catch((err) => console.log(err));
 		} else {
 			fetch("https://svelte-meetup-c9828.firebaseio.com/meetups.json", {
 				method: "POST",
